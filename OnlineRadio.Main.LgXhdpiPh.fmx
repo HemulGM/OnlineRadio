@@ -2,11 +2,35 @@ inherited FormMain_LgXhdpiPh: TFormMain_LgXhdpiPh
   ClientHeight = 695
   ClientWidth = 450
   DesignerMasterStyle = 0
+  inherited Layout2: TLayout
+    Size.Width = 450.000000000000000000
+    Size.Height = 695.000000000000000000
+    inherited ListViewRadios: TListView
+      Size.Width = 450.000000000000000000
+      Size.Height = 695.000000000000000000
+      ItemAppearanceObjects.ItemObjects.Text.Width = 303.000000000000000000
+    end
+  end
   inherited Layout1: TLayout
-    Position.Y = 584.000000000000000000
+    Position.Y = 600.000000000000000000
     Size.Width = 450.000000000000000000
     inherited Rectangle1: TRectangle
       Size.Width = 450.000000000000000000
+      inherited Layout3: TLayout
+        Size.Width = 450.000000000000000000
+        inherited GridPanelLayout1: TGridPanelLayout
+          Size.Width = 450.000000000000000000
+          inherited SpeedButton1: TSpeedButton
+            Margins.Left = 20.000000000000000000
+          end
+          inherited ButtonRefresh: TSpeedButton
+            Margins.Left = 20.000000000000000000
+          end
+        end
+      end
     end
+  end
+  inherited RESTResponseDataSetAdapter1: TRESTResponseDataSetAdapter
+    ResponseJSON = nil
   end
 end
