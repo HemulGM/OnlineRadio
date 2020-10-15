@@ -1,0 +1,12 @@
+inherited FormMain_iPhone4in: TFormMain_iPhone4in
+  ClientHeight = 548
+  ClientWidth = 320
+  DesignerMasterStyle = 0
+  inherited Layout1: TLayout
+    Position.Y = 437.000000000000000000
+    Size.Width = 320.000000000000000000
+    inherited Rectangle1: TRectangle
+      Size.Width = 320.000000000000000000
+    end
+  end
+end
