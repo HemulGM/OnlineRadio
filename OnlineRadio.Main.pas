@@ -10,14 +10,15 @@ uses
   Data.Bind.EngExt, Fmx.Bind.DBEngExt, System.Rtti, System.Bindings.Outputs,
   Fmx.Bind.Editors, REST.Types, Data.Bind.DBScope, Data.DB, Datasnap.DBClient,
   REST.Client, Data.Bind.Components, Data.Bind.ObjectScope,
-  REST.Response.Adapter, FMX.ListView, FMX.Controls.Presentation;
+  REST.Response.Adapter, FMX.ListView, FMX.Controls.Presentation, FMX.Media,
+  FMX.Player.Android, FMX.Player.Windows, FMX.Player.Shared, FMX.Player;
 
 type
   TFormMain = class(TForm)
     ActionList1: TActionList;
     Layout1: TLayout;
     Rectangle1: TRectangle;
-    Circle1: TCircle;
+    CircleControl: TCircle;
     PathPlay: TPath;
     PathPause: TPath;
     Layout2: TLayout;
@@ -33,10 +34,17 @@ type
     LinkListControlToField1: TLinkListControlToField;
     Layout3: TLayout;
     GridPanelLayout1: TGridPanelLayout;
-    SpeedButton1: TSpeedButton;
+    ButtonSearch: TSpeedButton;
     ButtonRefresh: TSpeedButton;
+    FMXPlayer: TFMXPlayer;
+    LinkPropertyToFieldStreamURL: TLinkPropertyToField;
+    ImageDefaultRadio: TImage;
     procedure FormCreate(Sender: TObject);
     procedure ButtonRefreshClick(Sender: TObject);
+    procedure CircleControlClick(Sender: TObject);
+    procedure FMXPlayerChangeState(Sender: TObject);
+    procedure ListViewRadiosPullRefresh(Sender: TObject);
+    procedure ButtonSearchClick(Sender: TObject);
   private
     FLoadImages: Boolean;
     FLoading: Boolean;
@@ -61,10 +69,39 @@ begin
   LoadRadio;
 end;
 
+procedure TFormMain.ButtonSearchClick(Sender: TObject);
+begin
+  ListViewRadios.SearchVisible := not ListViewRadios.SearchVisible;
+end;
+
+procedure TFormMain.CircleControlClick(Sender: TObject);
+begin
+  if FMXPlayer.IsPlay then
+    FMXPlayer.Stop
+  else
+    FMXPlayer.PlayAsync;
+end;
+
+procedure TFormMain.FMXPlayerChangeState(Sender: TObject);
+begin
+  case FMXPlayer.State of
+    psNone, psStop, psPause:
+      PathPlay.Visible := True;
+    psPlay, psOpening:
+      PathPlay.Visible := False;
+  end;
+  PathPause.Visible := not PathPlay.Visible;
+end;
+
 procedure TFormMain.FormCreate(Sender: TObject);
 begin
   FLoading := False;
   FLoadImages := False;
+  LoadRadio;
+end;
+
+procedure TFormMain.ListViewRadiosPullRefresh(Sender: TObject);
+begin
   LoadRadio;
 end;
 
@@ -82,8 +119,8 @@ begin
       Stream: TMemoryStream;
     begin
       FLoading := False;
-      if FLoadImages then
-        Exit;
+      while FLoadImages do
+        Sleep(100);
       FLoadImages := True;
       try
         HTTP := THTTPClient.Create;
@@ -98,6 +135,7 @@ begin
                 if i >= ListViewRadios.Items.Count then
                   Exit;
                 url := ListViewRadios.Items[i].Detail;
+                ListViewRadios.Items[i].Bitmap.Assign(ImageDefaultRadio.Bitmap);
               end);
             if not url.IsEmpty then
             begin
@@ -127,13 +165,13 @@ begin
         end;
       except
       end;
-      FLoadImages := False;
       TThread.ForceQueue(nil,
         procedure
         begin
           ListViewRadios.RecalcSize;
           ListViewRadios.Repaint;
         end);
+      FLoadImages := False;
     end, False, True,
     procedure(Sender: TObject)
     begin
