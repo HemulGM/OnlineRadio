@@ -11,7 +11,8 @@ uses
   Fmx.Bind.Editors, REST.Types, Data.Bind.DBScope, Data.DB, Datasnap.DBClient,
   REST.Client, Data.Bind.Components, Data.Bind.ObjectScope,
   REST.Response.Adapter, FMX.ListView, FMX.Controls.Presentation, FMX.Media,
-  FMX.Player.Android, FMX.Player.Windows, FMX.Player.Shared, FMX.Player;
+  FMX.Player.Android, FMX.Player.Windows, FMX.Player.Shared, FMX.Player,
+  FMX.Effects;
 
 type
   TFormMain = class(TForm)
@@ -39,11 +40,10 @@ type
     FMXPlayer: TFMXPlayer;
     LinkPropertyToFieldStreamURL: TLinkPropertyToField;
     ImageDefaultRadio: TImage;
-    procedure FormCreate(Sender: TObject);
+    GlowEffect1: TGlowEffect;
     procedure ButtonRefreshClick(Sender: TObject);
     procedure CircleControlClick(Sender: TObject);
     procedure FMXPlayerChangeState(Sender: TObject);
-    procedure ListViewRadiosPullRefresh(Sender: TObject);
     procedure ButtonSearchClick(Sender: TObject);
   private
     FLoadImages: Boolean;
@@ -61,8 +61,6 @@ uses
   HGMRadio.Api, System.Net.HttpClient;
 
 {$R *.fmx}
-{$R *.LgXhdpiPh.fmx ANDROID}
-{$R *.iPhone4in.fmx IOS}
 
 procedure TFormMain.ButtonRefreshClick(Sender: TObject);
 begin
@@ -76,33 +74,13 @@ end;
 
 procedure TFormMain.CircleControlClick(Sender: TObject);
 begin
-  if FMXPlayer.IsPlay then
-    FMXPlayer.Stop
-  else
-    FMXPlayer.PlayAsync;
+  if FMXPlayer.IsPlay then FMXPlayer.Stop else FMXPlayer.PlayAsync;
 end;
 
 procedure TFormMain.FMXPlayerChangeState(Sender: TObject);
 begin
-  case FMXPlayer.State of
-    psNone, psStop, psPause:
-      PathPlay.Visible := True;
-    psPlay, psOpening:
-      PathPlay.Visible := False;
-  end;
+  PathPlay.Visible := FMXPlayer.State in [psNone, psStop, psPause];
   PathPause.Visible := not PathPlay.Visible;
-end;
-
-procedure TFormMain.FormCreate(Sender: TObject);
-begin
-  FLoading := False;
-  FLoadImages := False;
-  LoadRadio;
-end;
-
-procedure TFormMain.ListViewRadiosPullRefresh(Sender: TObject);
-begin
-  LoadRadio;
 end;
 
 procedure TFormMain.LoadRadio;
