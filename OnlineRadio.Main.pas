@@ -3,16 +3,12 @@ unit OnlineRadio.Main;
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-  FMX.Types, FMX.Controls, FMX.Graphics, FMX.Forms, FMX.Dialogs, FMX.TabControl,
-  System.Actions, FMX.ActnList, FMX.Objects, FMX.StdCtrls, FMX.Layouts,
-  FMX.ListView.Types, FMX.ListView.Appearances, FMX.ListView.Adapters.Base,
-  Data.Bind.EngExt, Fmx.Bind.DBEngExt, System.Rtti, System.Bindings.Outputs,
-  Fmx.Bind.Editors, REST.Types, Data.Bind.DBScope, Data.DB, Datasnap.DBClient,
-  REST.Client, Data.Bind.Components, Data.Bind.ObjectScope,
-  REST.Response.Adapter, FMX.ListView, FMX.Controls.Presentation, FMX.Media,
-  FMX.Player.Android, FMX.Player.Windows, FMX.Player.Shared, FMX.Player,
-  FMX.Effects;
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, FMX.Types, FMX.Controls, FMX.Graphics,
+  FMX.Forms, FMX.Dialogs, FMX.TabControl, System.Actions, FMX.ActnList, FMX.Objects, FMX.StdCtrls, FMX.Layouts,
+  FMX.ListView.Types, FMX.ListView.Appearances, FMX.ListView.Adapters.Base, Data.Bind.EngExt, Fmx.Bind.DBEngExt,
+  System.Rtti, System.Bindings.Outputs, Fmx.Bind.Editors, REST.Types, Data.Bind.DBScope, Data.DB, Datasnap.DBClient,
+  REST.Client, Data.Bind.Components, Data.Bind.ObjectScope, REST.Response.Adapter, FMX.ListView, FMX.Player, FMX.Effects,
+  FMX.Controls.Presentation;
 
 type
   TFormMain = class(TForm)
@@ -40,7 +36,6 @@ type
     FMXPlayer: TFMXPlayer;
     LinkPropertyToFieldStreamURL: TLinkPropertyToField;
     ImageDefaultRadio: TImage;
-    GlowEffect1: TGlowEffect;
     procedure ButtonRefreshClick(Sender: TObject);
     procedure CircleControlClick(Sender: TObject);
     procedure FMXPlayerChangeState(Sender: TObject);
@@ -74,13 +69,18 @@ end;
 
 procedure TFormMain.CircleControlClick(Sender: TObject);
 begin
-  if FMXPlayer.IsPlay then FMXPlayer.Stop else FMXPlayer.PlayAsync;
+  if FMXPlayer.IsPlay then
+    FMXPlayer.Stop
+  else
+    FMXPlayer.PlayAsync;
 end;
 
 procedure TFormMain.FMXPlayerChangeState(Sender: TObject);
 begin
   PathPlay.Visible := FMXPlayer.State in [psNone, psStop, psPause];
   PathPause.Visible := not PathPlay.Visible;
+  PathPlay.Repaint;
+  PathPause.Repaint;
 end;
 
 procedure TFormMain.LoadRadio;
