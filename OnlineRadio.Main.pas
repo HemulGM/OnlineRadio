@@ -8,7 +8,7 @@ uses
   FMX.ListView.Types, FMX.ListView.Appearances, FMX.ListView.Adapters.Base, Data.Bind.EngExt, Fmx.Bind.DBEngExt,
   System.Rtti, System.Bindings.Outputs, Fmx.Bind.Editors, REST.Types, Data.Bind.DBScope, Data.DB, Datasnap.DBClient,
   REST.Client, Data.Bind.Components, Data.Bind.ObjectScope, REST.Response.Adapter, FMX.ListView, FMX.Player, FMX.Effects,
-  FMX.Controls.Presentation;
+  FMX.Controls.Presentation, System.Threading;
 
 type
   TFormMain = class(TForm)
@@ -36,6 +36,8 @@ type
     FMXPlayer: TFMXPlayer;
     LinkPropertyToFieldStreamURL: TLinkPropertyToField;
     ImageDefaultRadio: TImage;
+    TrackBar1: TTrackBar;
+    LinkControlToPropertyVolumeChannel: TLinkControlToProperty;
     procedure ButtonRefreshClick(Sender: TObject);
     procedure CircleControlClick(Sender: TObject);
     procedure FMXPlayerChangeState(Sender: TObject);
@@ -43,6 +45,7 @@ type
   private
     FLoadImages: Boolean;
     FLoading: Boolean;
+    procedure LoadPreviews;
   public
     procedure LoadRadio;
   end;
@@ -83,12 +86,9 @@ begin
   PathPause.Repaint;
 end;
 
-procedure TFormMain.LoadRadio;
+procedure TFormMain.LoadPreviews;
 begin
-  if FLoading then
-    Exit;
-  FLoading := True;
-  RESTRequestRadios.ExecuteAsync(
+  TTask.Run(
     procedure
     var
       i: Integer;
@@ -150,6 +150,18 @@ begin
           ListViewRadios.Repaint;
         end);
       FLoadImages := False;
+    end);
+end;
+
+procedure TFormMain.LoadRadio;
+begin
+  if FLoading then
+    Exit;
+  FLoading := True;
+  RESTRequestRadios.ExecuteAsync(
+    procedure
+    begin
+      LoadPreviews;
     end, False, True,
     procedure(Sender: TObject)
     begin

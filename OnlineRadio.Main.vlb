@@ -18,8 +18,9 @@ Coordinates=547,486,60,36
 Coordinates=151,380,77,58
 
 [FMXPlayer]
-Coordinates=590,190,78,58
+Coordinates=590,190,95,80
 Visible=True
+ExplicitSubNodes=VolumeChannel
 
 [BindSourceDB3]
 Coordinates=363,43,106,168
@@ -66,4 +67,11 @@ Coordinates=10,486,80,36
 
 [StyleBookMain]
 Coordinates=467,441,100,36
+
+[]
+Coordinates=390,240,64,51
+Visible=True
+
+[TrackBar1]
+Coordinates=169,263,74,58
 
