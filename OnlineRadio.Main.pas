@@ -130,7 +130,6 @@ begin
                       begin
                         ListViewRadios.Items[j].Bitmap.LoadFromStream(Stream);
                         ListViewRadios.Items[j].Detail := '';
-                        ListViewRadios.Repaint;
                         Break;
                       end;
                   end);
